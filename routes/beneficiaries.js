@@ -13,6 +13,16 @@ module.exports = (server) => {
         }
     })
 
+    server.get('/beneficiaries/:id', async (req, res, next) => {
+        try {
+            const beneficiariy = await Beneficiary.findById(req.params.id);
+            res.send(beneficiariy);
+            next();
+        } catch (err) {
+            return next(new errors.ResourceNotFoundError(`There is no beneficiary with the id of ${req.params.id}`));
+        }
+    })
+
     // Create a beneficiary
     server.post('/beneficiaries', async(req, res, next) => {
         // Check for JSON
@@ -37,7 +47,38 @@ module.exports = (server) => {
         } catch (err) {
             return next(new errors.InternalError(err.message));
         }
+    });
         
+
+    // Create a beneficiary
+    server.put('/beneficiaries/:id', async(req, res, next) => {
+        // Check for JSON
+        if(!req.is('application/json')){
+            return next(new errors.InvalidContentError(("Expects'application/json'")));
+        }
+
+        try {
+            const beneficiary = await Beneficiary.findOneAndUpdate({_id : req.params.id}, req.body);
+            res.send(200);
+            next();
+        } catch (err) {
+            return next(new errors.ResourceNotFoundError(`There is no beneficiary with the id of ${req.params.id}`));
+        }
     })
 
+    // Delete a beneficiary
+    server.del('/beneficiaries/:id', async(req, res, next) => {
+        // Check for JSON
+        if(!req.is('application/json')){
+            return next(new errors.InvalidContentError(("Expects'application/json'")));
+        }
+
+        try {
+            const beneficiary = await Beneficiary.findOneAndRemove({_id : req.params.id});
+            res.send(204);
+            next();
+        } catch (err) {
+            return next(new errors.ResourceNotFoundError(`There is no beneficiary with the id of ${req.params.id}`));
+        }
+    })
 }   

@@ -13,7 +13,7 @@ server.listen(config.PORT, () => {
         {useNewUrlParser: true}
     )
 });
-console.log('teste')
+
 const db = mongoose.connection;
 
 db.on('error', (err) => console.log(err));
